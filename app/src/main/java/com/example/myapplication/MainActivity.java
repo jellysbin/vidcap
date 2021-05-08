@@ -1,4 +1,5 @@
 package com.example.myapplication;
+import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback  {
     private MediaRecorder mediaRecorder;
@@ -122,42 +125,24 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        long now = System.currentTimeMillis();
+                        Date mDate = new Date(now);
+                        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyyMMdd_hhmmss");
+                        String getTime = simpleDate.format(mDate);
                         try {
-
                             mediaRecorder = new MediaRecorder();
                             mcam.unlock();
                             mediaRecorder.setCamera(mcam);
                             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);//녹음 기능
                             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);//걍다하셈이거
-                            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);//영상 오디오 인코딩 방식
-                            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);// 영상인코딩 방식
-                            mediaRecorder.setVideoFrameRate(17);//고화질옵션 내컴터에뮬은 17에서 팅김
-                            //mediaRecorder.setVideoSize(sh.getSurfaceFrame().width(), sh.getSurfaceFrame().height());//고화질 옵션
-                            //그 외 고화질 옵션..
-                            /*CamcorderProfile cpHigh = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-mMediaRecorder.setVideoEncodingBitRate(cpHigh.videoBitRate);
-mMediaRecorder.setVideoFrameRate(cpHigh.videoFrameRate);
-int rotation = mWindowManager.getDefaultDisplay().getRotation();
-int orientation = ORIENTATIONS.get(rotation + 90);
-mMediaRecorder.setOrientationHint(orientation);*/
-
+                            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
                             mediaRecorder.setOrientationHint(90);
                             vidPath = Environment.getExternalStorageDirectory() + "/record3.mp4";
-                            //vidPath =   "/sdcard/Android/record.mp4";
-                            //외부 디렉토리중 가장 상위 디렉토리를 찾아 리턴
-                            //Log.d("MainActivity", "file path is " + vidPath);
-                            mediaRecorder.setOutputFile(vidPath);
+                            mediaRecorder.setOutputFile("sdcard/" + getTime + ".mp4");
                             mediaRecorder.setPreviewDisplay(sh.getSurface());
                             mediaRecorder.prepare();
                             mediaRecorder.start();
-                            }catch(IOException e){
+                            }catch(Exception e){
                             Toast.makeText(MainActivity.this, "ioexeption", Toast.LENGTH_LONG).show();
                             }
                             recording = true;
@@ -185,32 +170,5 @@ mMediaRecorder.setOrientationHint(orientation);*/
             mediaRecorder = null;
         }
     }
-
-
-    /*public void refreshCamera(Camera camera) {
-        if (sh.getSurface() == null) {
-            // preview surface does not exist
-            return;
-        }
-        // stop preview before making changes
-        try {
-            mcam.stopPreview();
-        } catch (Exception e) {
-            // ignore: tried to stop a non-existent preview
-        }
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-        // start preview with new settings
-        setCamera(camera);
-        try {
-            mcam.setPreviewDisplay(sh);
-            mcam.startPreview();
-        } catch (Exception e) {
-        }
-    }
-    public void setCamera(Camera camera) {
-        //method to set a camera instance
-        mcam = camera;
-    }*/
 }
 
