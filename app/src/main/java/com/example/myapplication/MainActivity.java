@@ -103,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private  void setting(){
         mcam = Camera.open();
+        Camera.Parameters params = mcam.getParameters();
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        mcam.setParameters(params);
         mcam.setDisplayOrientation(90);
         sv = (SurfaceView)findViewById(R.id.surfaceView);
         sh = sv.getHolder();
